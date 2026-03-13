@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>De'licia - Produtos Artesanais</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header class="header">
+        <div class="logo-container">
+            <img src="{{ url_for('static', filename='img/logo_delicia.png') }}" alt="De'licia Logo" class="logo">
+        </div>
+        <h1 class="store-name">De'licia</h1>
+    </header>
+
+    <main class="main-content">
+        <section class="catalog">
+            <h2 class="section-title">Catálogo de Produtos</h2>
+            <form action="{{ url_for('pagamento') }}" method="post" class="order-form">
+                {% for product_id, product in products.items() %}
+                <div class="product-card">
+                    <h3 class="product-name">{{ product.name }}</h3>
+                    <p class="product-price">R$ {{ "%.2f"|format(product.price) }}</p>
+                    <label for="{{ product_id }}_qty" class="qty-label">Quantidade:</label>
+                    <input type="number" id="{{ product_id }}_qty" name="{{ product_id }}_qty" min="0" value="0" class="qty-input">
+                </div>
+                {% endfor %}
+                <button type="submit" class="submit-btn">Fazer Pedido</button>
+            </form>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2023 De'licia. Todos os direitos reservados.</p>
+    </footer>
+</body>
+</html>

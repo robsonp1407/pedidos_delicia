@@ -1,0 +1,189 @@
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #FFFFFF; /* Branco */
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Header */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-color: #FFFFFF;
+    border-bottom: 2px solid #6AB18E; /* Verde Água para borda decorativa */
+}
+
+.logo-container {
+    margin-right: 20px;
+}
+
+.logo {
+    max-width: 100px;
+    height: auto;
+}
+
+.store-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5em;
+    color: #B54D81; /* Rosa para título */
+    font-weight: 700;
+}
+
+/* Main Content */
+.main-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+/* Catalog Section */
+.catalog {
+    text-align: center;
+}
+
+.section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2em;
+    color: #B54D81; /* Rosa */
+    margin-bottom: 30px;
+}
+
+.product-card {
+    display: inline-block;
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #6AB18E; /* Verde Água para borda */
+    border-radius: 8px;
+    background-color: #FFFFFF;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    width: 250px;
+    text-align: center;
+}
+
+.product-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5em;
+    color: #B54D81; /* Rosa */
+    margin-bottom: 10px;
+}
+
+.product-price {
+    font-size: 1.2em;
+    color: #6AB18E; /* Verde Água */
+    margin-bottom: 15px;
+}
+
+.qty-label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.qty-input {
+    width: 60px;
+    padding: 5px;
+    border: 1px solid #6AB18E; /* Verde Água */
+    border-radius: 4px;
+    text-align: center;
+}
+
+/* Form */
+.order-form {
+    margin-top: 30px;
+}
+
+.submit-btn {
+    background-color: #B54D81; /* Rosa */
+    color: #FFFFFF;
+    border: none;
+    padding: 15px 30px;
+    font-size: 1.2em;
+    font-weight: 500;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.submit-btn:hover {
+    background-color: #9A3D6A; /* Tom mais escuro do rosa */
+}
+
+/* Checkout Section */
+.checkout {
+    text-align: center;
+}
+
+.total-display {
+    margin-bottom: 30px;
+}
+
+.total-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 2em;
+    color: #B54D81; /* Rosa */
+}
+
+.pix-section {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.pix-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5em;
+    color: #B54D81; /* Rosa */
+    margin-bottom: 15px;
+}
+
+.pix-instruction {
+    margin-bottom: 15px;
+    font-size: 1.1em;
+}
+
+.pix-code {
+    width: 100%;
+    height: 100px;
+    padding: 10px;
+    border: 1px solid #6AB18E; /* Verde Água */
+    border-radius: 4px;
+    font-family: monospace;
+    resize: none;
+    margin-bottom: 15px;
+}
+
+.copy-btn {
+    background-color: #6AB18E; /* Verde Água */
+    color: #FFFFFF;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1em;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.copy-btn:hover {
+    background-color: #5A9B7A; /* Tom mais escuro do verde água */
+}
+
+/* Footer */
+.footer {
+    text-align: center;
+    padding: 20px;
+    background-color: #FFFFFF;
+    border-top: 2px solid #6AB18E; /* Verde Água */
+    margin-top: 40px;
+}
+
+.footer p {
+    color: #666;
+}
