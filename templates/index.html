@@ -10,7 +10,7 @@
 <body>
     <header class="header">
         <div class="logo-container">
-            <img src="{{ url_for('static', filename='img/logo_delicia.png') }}" alt="De'licia Logo" class="logo">
+            <img src="{{ url_for('static', filename='img/Logo_delicia.jpg') }}" alt="De'licia Logo" class="logo">
         </div>
         <h1 class="store-name">De'licia</h1>
     </header>
@@ -18,7 +18,14 @@
     <main class="main-content">
         <section class="catalog">
             <h2 class="section-title">Catálogo de Produtos</h2>
-            <form action="{{ url_for('pagamento') }}" method="post" class="order-form">
+            <form id="orderForm" action="{{ url_for('pagamento') }}" method="post" class="order-form">
+                <div class="buyer-info">
+                    <label for="buyer_name">Nome<span style="color:red">*</span>:</label>
+                    <input type="text" id="buyer_name" name="buyer_name" class="text-input" required>
+
+                    <label for="buyer_phone">Telefone<span style="color:red">*</span>:</label>
+                    <input type="text" id="buyer_phone" name="buyer_phone" class="text-input" required maxlength="15" placeholder="(00) 00000-0000">
+                </div>
                 {% for product_id, product in products.items() %}
                 <div class="product-card">
                     <h3 class="product-name">{{ product.name }}</h3>
@@ -27,8 +34,25 @@
                     <input type="number" id="{{ product_id }}_qty" name="{{ product_id }}_qty" min="0" value="0" class="qty-input">
                 </div>
                 {% endfor %}
-                <button type="submit" class="submit-btn">Fazer Pedido</button>
+                <button id="reviewBtn" type="button" class="submit-btn">Fazer Pedido</button>
             </form>
+
+            <!-- Modal de revisão -->
+            <div id="modalOverlay" class="modal-overlay">
+                <div class="review-modal">
+                    <img src="{{ url_for('static', filename='img/Logo_delicia.jpg') }}" alt="Logo" style="display:block;margin:0 auto;max-width:120px;">
+                    <h2>Revisar Pedido</h2>
+                    <div class="summary" id="orderSummary">
+                        <!-- conteúdo preenchido via JS -->
+                    </div>
+                    <div class="btn-group">
+                        <button type="button" class="btn-back" id="backBtn">Voltar</button>
+                        <button type="button" class="btn-confirm" id="confirmBtn">Confirmar</button>
+                    </div>
+                </div>
+            </div>
+
+            <script src="{{ url_for('static', filename='js/main.js') }}"></script>
         </section>
     </main>
 

@@ -27,7 +27,7 @@ body {
 }
 
 .logo {
-    max-width: 100px;
+    max-width: 200px; /* increased to harmonize size */
     height: auto;
 }
 
@@ -88,17 +88,41 @@ body {
     font-weight: 500;
 }
 
-.qty-input {
-    width: 60px;
-    padding: 5px;
-    border: 1px solid #6AB18E; /* Verde Água */
+.qty-input,
+.text-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
     border-radius: 4px;
-    text-align: center;
+    font-size: 1em;
+}
+
+.qty-input:focus,
+.text-input:focus {
+    outline: none;
+    border-color: #6AB18E; /* Verde Água ao focar */
+    box-shadow: 0 0 5px rgba(106,177,142,0.5);
 }
 
 /* Form */
 .order-form {
     margin-top: 30px;
+}
+
+.buyer-info {
+    max-width: 400px;
+    margin: 0 auto 20px;
+    text-align: left;
+}
+
+.buyer-info label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.buyer-info .text-input {
+    margin-bottom: 15px;
 }
 
 .submit-btn {
@@ -130,6 +154,15 @@ body {
     font-family: 'Playfair Display', serif;
     font-size: 2em;
     color: #B54D81; /* Rosa */
+}
+
+.buyer-summary {
+    margin-bottom: 20px;
+    text-align: left;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 1.1em;
 }
 
 .pix-section {
@@ -173,6 +206,64 @@ body {
 
 .copy-btn:hover {
     background-color: #5A9B7A; /* Tom mais escuro do verde água */
+}
+
+/* Modal overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.6);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.review-modal {
+    background: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    text-align: left;
+}
+
+.review-modal h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-family: 'Playfair Display', serif;
+    color: #B54D81;
+}
+
+.review-modal .summary {
+    margin-bottom: 20px;
+    font-size: 1em;
+}
+
+.review-modal .btn-group {
+    display: flex;
+    justify-content: space-between;
+}
+
+.review-modal .btn-group button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+}
+
+.review-modal .btn-back {
+    background: #ccc;
+}
+
+.review-modal .btn-confirm {
+    background: #B54D81;
+    color: #fff;
 }
 
 /* Footer */

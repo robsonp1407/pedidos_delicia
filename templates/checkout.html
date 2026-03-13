@@ -10,7 +10,7 @@
 <body>
     <header class="header">
         <div class="logo-container">
-            <img src="{{ url_for('static', filename='img/logo_delicia.png') }}" alt="De'licia Logo" class="logo">
+            <img src="{{ url_for('static', filename='img/Logo_delicia.jpg') }}" alt="De'licia Logo" class="logo">
         </div>
         <h1 class="store-name">De'licia</h1>
     </header>
@@ -18,6 +18,12 @@
     <main class="main-content">
         <section class="checkout">
             <h2 class="section-title">Checkout</h2>
+            {% if buyer_name or buyer_phone %}
+            <div class="buyer-summary">
+                <p><strong>Nome:</strong> {{ buyer_name }}</p>
+                <p><strong>Telefone:</strong> {{ buyer_phone }}</p>
+            </div>
+            {% endif %}
             <div class="total-display">
                 <p class="total-text">Valor Total: R$ {{ "%.2f"|format(subtotal) }}</p>
             </div>
