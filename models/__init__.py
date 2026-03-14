@@ -1,6 +1,8 @@
-"""Models package for the Edelicia application.
+"""Pacote de models para a aplicação Edelicia.
 
-This package contains business logic and domain models.
+Este pacote agrupa os modelos de domínio e a lógica de negócio (pedido,
+produto e notificações). Ele permite que a camada de rota (Flask) importe
+apenas o que precisa para compor a resposta HTTP.
 """
 
 from .order import Order, OrderLine
