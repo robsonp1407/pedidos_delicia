@@ -8,15 +8,18 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <header class="header">
+    <!-- <header class="header">
         <div class="logo-container">
             <img src="{{ url_for('static', filename='img/Logo_delicia.jpg') }}" alt="De'licia Logo" class="logo">
         </div>
         <h1 class="store-name">De'licia</h1>
-    </header>
+    </header> -->
 
     <main class="main-content">
         <section class="catalog">
+        <div class="logo-container">
+            <img src="{{ url_for('static', filename='img/Logo_delicia.jpg') }}" alt="De'licia Logo" class="logo">
+        </div>
             <h2 class="section-title">Catálogo de Produtos</h2>
             <form id="orderForm" action="{{ url_for('pagamento') }}" method="post" class="order-form">
                 <div class="buyer-info">
@@ -29,6 +32,7 @@
                 <div class="products-grid">
                     {% for product_id, product in products.items() %}
                     <div class="product-card">
+                        <img src="{{ url_for('static', filename='img/' + product.image_file) }}" alt="{{ product.name }}" class="product-image">
                         <h3 class="product-name">{{ product.name }}</h3>
                         <p class="product-price">R$ {{ "%.2f"|format(product.price) }}</p>
                         {% for flavor in product.flavors %}

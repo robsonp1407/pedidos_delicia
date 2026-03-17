@@ -78,6 +78,14 @@ body {
     min-height: 250px; /* Altura mínima para uniformidade */
 }
 
+.product-image {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
 .card-spacer {
     flex: 1; /* Ocupa o espaço restante, empurrando conteúdo para cima */
 }

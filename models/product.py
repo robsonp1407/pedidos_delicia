@@ -26,6 +26,7 @@ class Product:
     name: str
     price: float
     flavors: List[Flavor]
+    image_file: str
 
 
 # Catálogo de produtos disponível no sistema.
@@ -38,8 +39,9 @@ PRODUCTS: Dict[str, Product] = {
         flavors=[
             Flavor(name="Doce de Leite", additional_price=0.0),
             Flavor(name="Brigadeiro", additional_price=0.0),
-            Flavor(name="Brigadeiro Branco", additional_price=1.0),           
+            Flavor(name="Brigadeiro de ninho", additional_price=1.0),           
         ],
+        image_file="paodemel.png",
     ),
     "brownie": Product(
         id="brownie",
@@ -51,5 +53,6 @@ PRODUCTS: Dict[str, Product] = {
             Flavor(name="Dois amores", additional_price=0.0),
             Flavor(name="Doce de leite", additional_price=1.5),
         ],
+        image_file="brownie.png",
     ),
 }
