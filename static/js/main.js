@@ -26,6 +26,20 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Atualizar preços incluindo cobertura padrão
+    document.querySelectorAll('.product-card').forEach(card => {
+        const priceElement = card.querySelector('.product-price');
+        const basePriceText = priceElement.textContent.replace('R$', '').replace(',', '.');
+        let basePrice = parseFloat(basePriceText);
+        const coveringSelect = card.querySelector('.covering-select');
+        if (coveringSelect) {
+            const selectedOption = coveringSelect.options[coveringSelect.selectedIndex];
+            const coveringAdditional = parseFloat(selectedOption.getAttribute('data-price')) || 0;
+            basePrice += coveringAdditional;
+        }
+        priceElement.textContent = `R$ ${basePrice.toFixed(2).replace('.', ',')}`;
+    });
+
     const reviewBtn = document.getElementById('reviewBtn');
     const modalOverlay = document.getElementById('modalOverlay');
     const backBtn = document.getElementById('backBtn');
@@ -42,6 +56,18 @@ window.addEventListener('DOMContentLoaded', () => {
             const prodName = card.querySelector('.product-name').textContent;
             const priceText = card.querySelector('.product-price').textContent.replace('R$', '').replace(',', '.');
             const basePrice = parseFloat(priceText);
+            
+            // Captura cobertura
+            const coveringSelect = card.querySelector('.covering-select');
+            let coveringName = 'Sem Cobertura';
+            let coveringAdditional = 0;
+            if (coveringSelect) {
+                const selectedOption = coveringSelect.options[coveringSelect.selectedIndex];
+                coveringName = selectedOption.value;
+                coveringAdditional = parseFloat(selectedOption.getAttribute('data-price')) || 0;
+            }
+            const effectiveBasePrice = basePrice + coveringAdditional;
+            
             const flavorSelections = [];
 
             card.querySelectorAll('.flavor-selection').forEach(flavorDiv => {
@@ -52,14 +78,14 @@ window.addEventListener('DOMContentLoaded', () => {
                     const flavorName = label.split(' (+')[0]; // Extrai nome do sabor
                     const additionalText = label.match(/\(\+R\$ ([\d.,]+)\)/);
                     const additionalPrice = additionalText ? parseFloat(additionalText[1].replace(',', '.')) : 0;
-                    const unitPrice = basePrice + additionalPrice;
+                    const unitPrice = effectiveBasePrice + additionalPrice;
                     total += unitPrice * qty;
                     flavorSelections.push({flavor: flavorName, qty, unitPrice});
                 }
             });
 
             if (flavorSelections.length > 0) {
-                products.push({name: prodName, basePrice, flavorSelections});
+                products.push({name: prodName, covering: coveringName, basePrice: effectiveBasePrice, flavorSelections});
             }
         });
         return {name, phone, products, total};
@@ -80,7 +106,7 @@ window.addEventListener('DOMContentLoaded', () => {
         html += `<p><strong>Telefone:</strong> ${data.phone}</p>`;
         html += '<ul>';
         data.products.forEach(p => {
-            html += `<li><strong>${p.name}</strong>`;
+            html += `<li><strong>${p.name} com ${p.covering}</strong>`;
             if (p.flavorSelections) {
                 html += '<ul>';
                 p.flavorSelections.forEach(fs => {

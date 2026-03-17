@@ -51,11 +51,10 @@ body {
 }
 
 .products-grid {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 20px;
-    align-items: flex-start;
+    align-items: start;
 }
 
 .section-title {
@@ -75,7 +74,6 @@ body {
     text-align: center;
     display: flex;
     flex-direction: column;
-    min-height: 250px; /* Altura mínima para uniformidade */
 }
 
 .product-image {
@@ -84,10 +82,6 @@ body {
     object-fit: cover;
     border-radius: 8px;
     margin-bottom: 10px;
-}
-
-.card-spacer {
-    flex: 1; /* Ocupa o espaço restante, empurrando conteúdo para cima */
 }
 
 .product-name {
@@ -101,6 +95,68 @@ body {
     font-size: 1.2em;
     color: #6AB18E; /* Verde Água */
     margin-bottom: 15px;
+}
+
+.selection-section {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #f0f0f0;
+    border-radius: 5px;
+    background-color: #fafafa;
+}
+
+.section-title-small {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1em;
+    color: #B54D81; /* Rosa */
+    margin-bottom: 10px;
+    text-align: left;
+}
+
+.covering-select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+    background-color: #fff;
+    min-height: 60px; /* Para list box */
+}
+
+.covering-select:focus {
+    outline: none;
+    border-color: #6AB18E; /* Verde Água ao focar */
+    box-shadow: 0 0 5px rgba(106,177,142,0.5);
+}
+
+.covering-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.covering-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    background-color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.covering-option:hover {
+    background-color: #f9f9f9;
+}
+
+.covering-option input[type="radio"] {
+    margin: 0;
+}
+
+.flavor-selection {
+    margin-bottom: 10px;
 }
 
 .qty-label {

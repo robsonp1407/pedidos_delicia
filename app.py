@@ -48,6 +48,13 @@ def pagamento() -> str:
     for product_id, product in PRODUCTS.items():
         item = order.add_item(product)  # Cria um item para o produto
 
+        # Captura cobertura selecionada
+        covering_name = request.form.get(f'{product_id}_covering')
+        if covering_name:
+            covering = next((c for c in product.coverings if c.name == covering_name), None)
+            if covering:
+                item.covering = covering
+
         for flavor in product.flavors:
             qty_raw = request.form.get(f'{product_id}_{flavor.name}_qty', '0')
             try:

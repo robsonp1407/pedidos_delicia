@@ -9,7 +9,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import List
 
-from .product import Flavor, Product
+from .product import Covering, Flavor, Product
 
 
 # Valor fixo do frete aplicado a cada pedido.
@@ -35,6 +35,7 @@ class OrderItem:
 
     product: Product
     flavor_selections: List[FlavorSelection] = field(default_factory=list)
+    covering: Covering = None
 
     def add_flavor_selection(self, flavor: Flavor, quantity: int) -> None:
         """Adiciona uma seleção de sabor ao item.
@@ -56,23 +57,26 @@ class OrderItem:
 
     @property
     def item_total(self) -> float:
-        """Total deste item: soma de (preço base + adicional) * qty para cada seleção."""
-        return sum(
+        """Total deste item: soma de (preço base + adicional) * qty para cada seleção + cobertura."""
+        base_total = sum(
             (self.product.price + fs.flavor.additional_price) * fs.quantity
             for fs in self.flavor_selections
         )
+        covering_additional = self.covering.additional_price if self.covering else 0.0
+        return base_total + covering_additional
 
     def format_item(self) -> str:
         """Retorna uma representação formatada do item para relatórios."""
+        covering_info = f" com {self.covering.name}" if self.covering else ""
         if not self.flavor_selections:
-            return f"{self.product.name} (sem sabores) = R$ {self.item_total:.2f}"
+            return f"{self.product.name}{covering_info} (sem sabores) = R$ {self.item_total:.2f}"
 
         details = []
         for fs in self.flavor_selections:
             price_per_unit = self.product.price + fs.flavor.additional_price
             details.append(f"{fs.flavor.name} x {fs.quantity} (R$ {price_per_unit:.2f} cada)")
 
-        return f"{self.product.name}: {', '.join(details)} = R$ {self.item_total:.2f}"
+        return f"{self.product.name}{covering_info}: {', '.join(details)} = R$ {self.item_total:.2f}"
 
 
 @dataclass
