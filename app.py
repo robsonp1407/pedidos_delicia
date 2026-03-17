@@ -30,55 +30,71 @@ def index() -> str:
 
 @app.route('/pagamento', methods=['POST'])
 def pagamento() -> str:
-    """Processa o formulário de pagamento e cria um pedido.
+    """Processa o formulário de pagamento e cria um pedido."""
 
-    Recebe os dados do comprador e as quantidades selecionadas por sabor,
-    monta um objeto `Order` e dispara a notificação para o Telegram em background.
-    """
-
-    # Captura dados do comprador (nome/telefone) do formulário.
     buyer_name = request.form.get('buyer_name', '').strip()
     buyer_phone = request.form.get('buyer_phone', '').strip()
+    delivery_method = request.form.get('delivery_method', 'Retirada')
+    delivery_address = request.form.get('delivery_address', '').strip()
+    delivery_fee = 0.0
 
-    # Cria o pedido (modelo de negócio)
-    order = Order(buyer_name=buyer_name, buyer_phone=buyer_phone)
+    if delivery_method == 'Entrega':
+        delivery_fee = 5.00
 
-    # Percorre o catálogo de produtos e lê as quantidades por sabor do formulário.
-    # O campo do formulário segue o padrão '<product_id>_<flavor_name>_qty'.
-    for product_id, product in PRODUCTS.items():
-        item = order.add_item(product)  # Cria um item para o produto
+    order = Order(
+        buyer_name=buyer_name,
+        buyer_phone=buyer_phone,
+        delivery_method=delivery_method,
+        delivery_address=delivery_address,
+        delivery_fee=delivery_fee,
+    )
 
-        # Captura cobertura selecionada
-        covering_name = request.form.get(f'{product_id}_covering')
-        if covering_name:
+    cart_json = request.form.get('cart_items', '[]')
+    try:
+        import json
+        cart_items = json.loads(cart_json)
+    except (ValueError, TypeError):
+        cart_items = []
+
+    for entry in cart_items:
+        product_id = entry.get('product_id')
+        product = PRODUCTS.get(product_id)
+        if not product:
+            continue
+
+        item = order.add_item(product)
+
+        covering_name = entry.get('covering')
+        if covering_name and product.coverings:
             covering = next((c for c in product.coverings if c.name == covering_name), None)
             if covering:
                 item.covering = covering
 
-        for flavor in product.flavors:
-            qty_raw = request.form.get(f'{product_id}_{flavor.name}_qty', '0')
-            try:
-                qty = int(qty_raw)
-            except ValueError:
-                qty = 0
+        for flavor_sel in entry.get('flavors', []):
+            flavor_name = flavor_sel.get('name')
+            qty = int(flavor_sel.get('qty', 0))
+            if qty <= 0:
+                continue
+            flavor = next((f for f in product.flavors if f.name == flavor_name), None)
+            if flavor:
+                item.add_flavor_selection(flavor, qty)
 
-            item.add_flavor_selection(flavor, qty)
-
-    # Envia notificação em background (não bloqueia a resposta HTTP).
     notify_async(order.build_telegram_message())
 
-    # Simulação de Pix Copia e Cola (código fictício)
     pix_code = (
         "00020101021126580014br.gov.bcb.pix0136123e4567-e12b-12d1-a456-42665544000052040000530398654040.005802BR5913Fulano de Tal6008BRASILIA62070503***6304E2CA"
     )
 
-    # Renderiza a página de checkout com o total e o código Pix
     return render_template(
         'checkout.html',
         subtotal=order.total,
+        delivery_method=delivery_method,
+        delivery_address=delivery_address,
+        delivery_fee=delivery_fee,
         pix_code=pix_code,
         buyer_name=buyer_name,
         buyer_phone=buyer_phone,
+        items=order.items,
     )
 
 

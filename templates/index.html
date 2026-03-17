@@ -8,85 +8,97 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <!-- <header class="header">
-        <div class="logo-container">
-            <img src="{{ url_for('static', filename='img/Logo_delicia.jpg') }}" alt="De'licia Logo" class="logo">
-        </div>
+    <header class="header">
+        <div class="logo-container"><img src="{{ url_for('static', filename='img/Logo_delicia.jpg') }}" alt="De'licia Logo" class="logo"></div>
         <h1 class="store-name">De'licia</h1>
-    </header> -->
+    </header>
 
     <main class="main-content">
         <section class="catalog">
-        <div class="logo-container">
-            <img src="{{ url_for('static', filename='img/Logo_delicia.jpg') }}" alt="De'licia Logo" class="logo">
-        </div>
             <h2 class="section-title">Catálogo de Produtos</h2>
-            <form id="orderForm" action="{{ url_for('pagamento') }}" method="post" class="order-form">
-                <div class="buyer-info">
-                    <label for="buyer_name">Nome<span style="color:red">*</span>:</label>
-                    <input type="text" id="buyer_name" name="buyer_name" class="text-input" required>
-
-                    <label for="buyer_phone">Telefone<span style="color:red">*</span>:</label>
-                    <input type="text" id="buyer_phone" name="buyer_phone" class="text-input" required maxlength="15" placeholder="(00) 00000-0000">
+            <div class="products-grid" id="productsGrid">
+                {% for product_id, product in products.items() %}
+                <div class="product-card" data-product-id="{{ product_id }}" data-product-name="{{ product.name }}" data-product-price="{{ product.price }}">
+                    <img src="{{ url_for('static', filename='img/' + product.image_file) }}" alt="{{ product.name }}" class="product-image">
+                    <h3 class="product-name">{{ product.name }}</h3>
+                    <p class="product-price">A partir de R$ {{ "%.2f"|format(product.price) }}</p>
+                    <button type="button" class="btn-customize" data-product-id="{{ product_id }}">Adicionar / Customizar</button>
+                    <script type="application/json" class="product-data">
+                        {
+                            "id": "{{ product_id }}",
+                            "name": "{{ product.name }}",
+                            "price": {{ product.price }},
+                            "coverings": [{% for c in product.coverings %}{"name":"{{ c.name }}","additional_price":{{ c.additional_price }}}{% if not loop.last %},{% endif %}{% endfor %}],
+                            "flavors": [{% for f in product.flavors %}{"name":"{{ f.name }}","additional_price":{{ f.additional_price }}}{% if not loop.last %},{% endif %}{% endfor %}]
+                        }
+                    </script>
                 </div>
-                <div class="products-grid">
-                    {% for product_id, product in products.items() %}
-                    <div class="product-card">
-                        <img src="{{ url_for('static', filename='img/' + product.image_file) }}" alt="{{ product.name }}" class="product-image">
-                        <h3 class="product-name">{{ product.name }}</h3>
-                        <p class="product-price">R$ {{ "%.2f"|format(product.price) }}</p>
-                        
-                        {% if product.coverings %}
-                        <div class="selection-section">
-                            <h4 class="section-title-small">Escolha a Cobertura</h4>
-                            <select name="{{ product_id }}_covering" class="covering-select">
-                                {% for covering in product.coverings %}
-                                <option value="{{ covering.name }}" data-price="{{ covering.additional_price }}" {% if loop.first %}selected{% endif %}>
-                                    {{ covering.name }}{% if covering.additional_price > 0 %} (+R$ {{ "%.2f"|format(covering.additional_price) }}){% endif %}
-                                </option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        {% endif %}
-                        
-                        <div class="selection-section">
-                            <h4 class="section-title-small">Escolha os Recheios</h4>
-                            {% for flavor in product.flavors %}
-                            <div class="flavor-selection">
-                                <label for="{{ product_id }}_{{ flavor.name }}_qty" class="qty-label">{{ flavor.name }}{% if flavor.additional_price > 0 %} (+R$ {{ "%.2f"|format(flavor.additional_price) }}){% endif %}:</label>
-                                <input type="number" id="{{ product_id }}_{{ flavor.name }}_qty" name="{{ product_id }}_{{ flavor.name }}_qty" min="0" value="0" class="qty-input">
-                            </div>
-                            {% endfor %}
-                        </div>
-                        
-                    </div>
-                    {% endfor %}
-                </div>
-                <br>
-                <button id="reviewBtn" type="button" class="submit-btn">Fazer Pedido</button>
-            </form>
-
-            <!-- Modal de revisão -->
-            <div id="modalOverlay" class="modal-overlay">
-                <div class="review-modal">
-                    <img src="{{ url_for('static', filename='img/Logo_delicia.jpg') }}" alt="Logo" style="display:block;margin:0 auto;max-width:120px;">
-                    <h2>Revisar Pedido</h2>
-                    <div class="summary" id="orderSummary">
-                        <!-- conteúdo preenchido via JS -->
-                    </div>
-                    <div class="btn-group">
-                        <button type="button" class="btn-back" id="backBtn">Voltar</button>
-                        <button type="button" class="btn-confirm" id="confirmBtn">Confirmar</button>
-                    </div>
-                </div>
+                {% endfor %}
             </div>
-
-            <script src="{{ url_for('static', filename='js/main.js') }}"></script>
         </section>
+
+        <div id="cartBar" class="cart-bar">
+            <div class="cart-summary">
+                <span id="cartCount">0</span> itens • <strong id="cartTotal">R$ 0,00</strong>
+            </div>
+            <button id="openCartBtn" class="cart-btn">Ver Carrinho</button>
+        </div>
+
+        <aside id="cartDrawer" class="cart-drawer">
+            <button id="closeCartBtn" class="drawer-close">×</button>
+            <h3>Carrinho</h3>
+            <div id="cartItemsList" class="cart-items-list"></div>
+
+            <div class="checkout-form">
+                <label>Nome<span>*</span>:</label>
+                <input type="text" id="drawer_buyer_name" placeholder="Seu nome">
+
+                <label>Telefone<span>*</span>:</label>
+                <input type="text" id="drawer_buyer_phone" placeholder="(00) 00000-0000">
+
+                <label>Forma de Entrega<span>*</span>:</label>
+                <select id="drawer_delivery_method">
+                    <option value="Retirada" selected>Retirada no Local (Grátis)</option>
+                    <option value="Entrega">Entrega em Curitiba (+R$ 5,00)</option>
+                </select>
+
+                <label id="drawer-address-label" style="display:none;">Endereço de Entrega<span>*</span>:</label>
+                <input type="text" id="drawer_delivery_address" placeholder="Rua, número, bairro" style="display:none;">
+
+                <p class="delivery-fee">Taxa de Entrega: <strong id="deliveryFee">R$ 0,00</strong></p>
+                <p class="cart-total">Total: <strong id="drawerTotal">R$ 0,00</strong></p>
+
+                <button type="button" id="checkoutBtn" class="submit-btn">Finalizar Pedido</button>
+            </div>
+        </aside>
+
+        <form id="submitOrderForm" action="{{ url_for('pagamento') }}" method="post" style="display:none;">
+            <input type="hidden" name="buyer_name" id="hidden_buyer_name">
+            <input type="hidden" name="buyer_phone" id="hidden_buyer_phone">
+            <input type="hidden" name="delivery_method" id="hidden_delivery_method">
+            <input type="hidden" name="delivery_address" id="hidden_delivery_address">
+            <input type="hidden" name="cart_items" id="hidden_cart_items">
+        </form>
+
     </main>
 
     <footer class="footer">
         <p>&copy; 2023 De'licia. Todos os direitos reservados.</p>
     </footer>
+
+    <div id="customizeModal" class="modal-overlay" style="display:none;">
+        <div class="customize-modal">
+            <button id="closeCustomizeBtn" class="modal-close">×</button>
+            <h2 id="modalProductName"></h2>
+            <p class="modal-price" id="modalProductPrice"></p>
+
+            <div id="modalCoverings" class="selection-section"></div>
+            <div id="modalFlavors" class="selection-section"></div>
+
+            <button type="button" id="addToCartBtn" class="submit-btn">Adicionar ao Carrinho</button>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>

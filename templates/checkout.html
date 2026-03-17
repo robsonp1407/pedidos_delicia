@@ -24,6 +24,37 @@
                 <p><strong>Telefone:</strong> {{ buyer_phone }}</p>
             </div>
             {% endif %}
+
+            {% if delivery_method %}
+            <div class="delivery-summary">
+                <p><strong>Forma de Entrega:</strong> {{ delivery_method }}</p>
+                {% if delivery_method == 'Entrega' %}
+                    <p><strong>Endereço:</strong> {{ delivery_address }}</p>
+                    <p><strong>Taxa de Entrega:</strong> R$ {{ "%.2f"|format(delivery_fee) }}</p>
+                {% else %}
+                    <p><strong>Taxa de Entrega:</strong> R$ 0,00</p>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            {% if items %}
+            <div class="order-items-summary">
+                <h3>Itens no Pedido</h3>
+                <ul>
+                    {% for item in items %}
+                    <li>
+                        <strong>{{ item.product.name }}</strong> ({{ item.covering.name if item.covering else 'Sem cobertura' }})
+                        <ul>
+                            {% for fs in item.flavor_selections %}
+                            <li>{{ fs.flavor.name }} x {{ fs.quantity }} = R$ {{ "%.2f"|format((item.product.price + fs.flavor.additional_price) * fs.quantity) }}</li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
             <div class="total-display">
                 <p class="total-text">Valor Total: R$ {{ "%.2f"|format(subtotal) }}</p>
             </div>

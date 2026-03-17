@@ -86,6 +86,9 @@ class Order:
     buyer_name: str
     buyer_phone: str
     items: List[OrderItem] = field(default_factory=list)
+    delivery_method: str = 'Retirada'
+    delivery_address: str = ''
+    delivery_fee: float = 0.0
 
     def add_item(self, product: Product) -> OrderItem:
         """Cria e adiciona um novo item ao pedido."""
@@ -101,7 +104,7 @@ class Order:
     @property
     def total(self) -> float:
         """Total do pedido incluindo frete."""
-        return self.subtotal + FRETE
+        return self.subtotal + self.delivery_fee
 
     def build_telegram_message(self) -> str:
         """Gera a mensagem de notificação enviada ao Telegram.
@@ -111,11 +114,16 @@ class Order:
         """
         item_lines = "\n".join(f"- {item.format_item()}" for item in self.items)
 
+        delivery_note = f"{self.delivery_method}"
+        if self.delivery_method == 'Entrega':
+            delivery_note += f" (Endereço: {self.delivery_address})"
+
         return (
             f"<b>Novo pedido</b>\n"
             f"Nome: {self.buyer_name}\n"
             f"Telefone: {self.buyer_phone}\n"
             f"Produtos:\n{item_lines}\n"
-            f"Frete: R$ {FRETE:.2f}\n"
+            f"Entrega: {delivery_note}\n"
+            f"Frete: R$ {self.delivery_fee:.2f}\n"
             f"Total: R$ {self.total:.2f}"
         )
