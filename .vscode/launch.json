@@ -1,0 +1,19 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://code.visualstudio.com/docs/python/debugging
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Python: Run app.py (Flask)",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/app.py",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "env": {
+        "FLASK_DEBUG": "1"
+      }
+    }
+  ]
+}
