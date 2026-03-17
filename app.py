@@ -32,8 +32,8 @@ def index() -> str:
 def pagamento() -> str:
     """Processa o formulário de pagamento e cria um pedido.
 
-    Recebe os dados do comprador e as quantidades selecionadas, monta um
-    objeto `Order` e dispara a notificação para o Telegram em background.
+    Recebe os dados do comprador e as quantidades selecionadas por sabor,
+    monta um objeto `Order` e dispara a notificação para o Telegram em background.
     """
 
     # Captura dados do comprador (nome/telefone) do formulário.
@@ -43,17 +43,19 @@ def pagamento() -> str:
     # Cria o pedido (modelo de negócio)
     order = Order(buyer_name=buyer_name, buyer_phone=buyer_phone)
 
-    # Percorre o catálogo de produtos e lê as quantidades do formulário.
-    # O campo do formulário segue o padrão '<product_id>_qty'.
+    # Percorre o catálogo de produtos e lê as quantidades por sabor do formulário.
+    # O campo do formulário segue o padrão '<product_id>_<flavor_name>_qty'.
     for product_id, product in PRODUCTS.items():
-        qty_raw = request.form.get(f'{product_id}_qty', '0')
-        try:
-            qty = int(qty_raw)
-        except ValueError:
-            # Caso o cliente envie algo inválido, tratamos como zero.
-            qty = 0
+        item = order.add_item(product)  # Cria um item para o produto
 
-        order.add_product(product, qty)
+        for flavor in product.flavors:
+            qty_raw = request.form.get(f'{product_id}_{flavor.name}_qty', '0')
+            try:
+                qty = int(qty_raw)
+            except ValueError:
+                qty = 0
+
+            item.add_flavor_selection(flavor, qty)
 
     # Envia notificação em background (não bloqueia a resposta HTTP).
     notify_async(order.build_telegram_message())

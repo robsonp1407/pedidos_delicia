@@ -39,14 +39,27 @@ window.addEventListener('DOMContentLoaded', () => {
         let total = 0;
         const products = [];
         document.querySelectorAll('.product-card').forEach(card => {
-            const qtyInput = card.querySelector('input[type="number"]');
-            const qty = parseInt(qtyInput.value) || 0;
-            if (qty > 0) {
-                const prodName = card.querySelector('.product-name').textContent;
-                const priceText = card.querySelector('.product-price').textContent.replace('R$', '').replace(',', '.');
-                const price = parseFloat(priceText);
-                total += price * qty;
-                products.push({name: prodName, qty, price});
+            const prodName = card.querySelector('.product-name').textContent;
+            const priceText = card.querySelector('.product-price').textContent.replace('R$', '').replace(',', '.');
+            const basePrice = parseFloat(priceText);
+            const flavorSelections = [];
+
+            card.querySelectorAll('.flavor-selection').forEach(flavorDiv => {
+                const qtyInput = flavorDiv.querySelector('input[type="number"]');
+                const qty = parseInt(qtyInput.value) || 0;
+                if (qty > 0) {
+                    const label = flavorDiv.querySelector('.qty-label').textContent;
+                    const flavorName = label.split(' (+')[0]; // Extrai nome do sabor
+                    const additionalText = label.match(/\(\+R\$ ([\d.,]+)\)/);
+                    const additionalPrice = additionalText ? parseFloat(additionalText[1].replace(',', '.')) : 0;
+                    const unitPrice = basePrice + additionalPrice;
+                    total += unitPrice * qty;
+                    flavorSelections.push({flavor: flavorName, qty, unitPrice});
+                }
+            });
+
+            if (flavorSelections.length > 0) {
+                products.push({name: prodName, basePrice, flavorSelections});
             }
         });
         return {name, phone, products, total};
@@ -67,7 +80,15 @@ window.addEventListener('DOMContentLoaded', () => {
         html += `<p><strong>Telefone:</strong> ${data.phone}</p>`;
         html += '<ul>';
         data.products.forEach(p => {
-            html += `<li>${p.name} - ${p.qty} x R$ ${p.price.toFixed(2)}</li>`;
+            html += `<li><strong>${p.name}</strong>`;
+            if (p.flavorSelections) {
+                html += '<ul>';
+                p.flavorSelections.forEach(fs => {
+                    html += `<li>${fs.flavor} - ${fs.qty} x R$ ${fs.unitPrice.toFixed(2)}</li>`;
+                });
+                html += '</ul>';
+            }
+            html += '</li>';
         });
         html += '</ul>';
         html += `<p><strong>Subtotal:</strong> R$ ${data.total.toFixed(2)}</p>`;

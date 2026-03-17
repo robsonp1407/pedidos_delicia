@@ -50,6 +50,14 @@ body {
     text-align: center;
 }
 
+.products-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    align-items: flex-start;
+}
+
 .section-title {
     font-family: 'Playfair Display', serif;
     font-size: 2em;
@@ -58,15 +66,20 @@ body {
 }
 
 .product-card {
-    display: inline-block;
-    margin: 20px;
     padding: 20px;
     border: 1px solid #6AB18E; /* Verde Água para borda */
     border-radius: 8px;
     background-color: #FFFFFF;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    width: 250px;
+    width: 300px;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    min-height: 250px; /* Altura mínima para uniformidade */
+}
+
+.card-spacer {
+    flex: 1; /* Ocupa o espaço restante, empurrando conteúdo para cima */
 }
 
 .product-name {
@@ -108,6 +121,7 @@ body {
 .order-form {
     margin-top: 30px;
 }
+
 
 .buyer-info {
     max-width: 400px;
