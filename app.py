@@ -10,7 +10,7 @@ contida em `models/` para manter a aplicação organizada seguindo o padrão MVC
 from flask import Flask, render_template, request
 
 from models.order import Order
-from models.product import PRODUCTS
+from models.product import load_products
 from models.telegram import notify_async
 
 
@@ -25,7 +25,7 @@ def index() -> str:
     disponíveis no formulário de pedido.
     """
 
-    return render_template('index.html', products=PRODUCTS)
+    return render_template('index.html', products=load_products())
 
 
 @app.route('/pagamento', methods=['POST'])
@@ -58,7 +58,7 @@ def pagamento() -> str:
 
     for entry in cart_items:
         product_id = entry.get('product_id')
-        product = PRODUCTS.get(product_id)
+        product = load_products().get(product_id)
         if not product:
             continue
 

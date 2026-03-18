@@ -6,7 +6,7 @@ apenas o que precisa para compor a resposta HTTP.
 """
 
 from .order import FlavorSelection, Order, OrderItem
-from .product import Covering, Flavor, Product, PRODUCTS
+from .product import Covering, Flavor, Product, load_products
 from .telegram import notify_async
 
 __all__ = [

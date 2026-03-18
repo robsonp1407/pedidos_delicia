@@ -1,0 +1,58 @@
+{
+  "pao_de_mel": {
+    "id": "pao_de_mel",
+    "name": "Pão de Mel",
+    "price": 10.00,
+    "flavors": [
+      {"name": "Doce de Leite", "additional_price": 0.0},
+      {"name": "Brigadeiro", "additional_price": 0.0},
+      {"name": "Brigadeiro de ninho", "additional_price": 1.0}
+    ],
+    "coverings": [
+      {"name": "Chocolate Preto", "additional_price": 0.0},
+      {"name": "Chocolate Branco", "additional_price": 0.5}
+    ],
+    "image_file": "paodemel.png",
+    "active": true
+  },
+  "brownie": {
+    "id": "brownie",
+    "name": "Brownie",
+    "price": 12.00,
+    "flavors": [
+      {"name": "Brigadeiro de ninho", "additional_price": 0.0},
+      {"name": "Brigadeiro", "additional_price": 0.0},
+      {"name": "Dois amores", "additional_price": 0.0},
+      {"name": "Doce de leite", "additional_price": 1.5}
+    ],
+    "coverings": [],
+    "image_file": "brownie.png",
+    "active": true
+  },
+  "torta": {
+    "id": "torta",
+    "name": "Torta",
+    "price": 15.00,
+    "flavors": [
+      {"name": "Morango", "additional_price": 0.0},
+      {"name": "Limão", "additional_price": 0.0}
+    ],
+    "coverings": [],
+    "image_file": "Logo_delicia.jpg",
+    "active": false
+  },
+  "doce_de_caseiro": {
+    "id": "doce_de_caseiro",
+    "name": "Doce de caseiro",
+    "price": 20.00,
+    "flavors": [
+      {"name": "Abóbora", "additional_price": 0.0},
+      {"name": "Uva", "additional_price": 0.0},
+      {"name": "Goiaba", "additional_price": 0.0},
+      {"name": "Pêssego", "additional_price": 1.0}
+    ],
+    "coverings": [],
+    "image_file": "doces.png",
+    "active": false
+  }
+}

@@ -18,51 +18,65 @@
     <main class="main-content">
         <section class="checkout">
             <h2 class="section-title">Checkout</h2>
+            
             {% if buyer_name or buyer_phone %}
-            <div class="buyer-summary">
-                <p><strong>Nome:</strong> {{ buyer_name }}</p>
-                <p><strong>Telefone:</strong> {{ buyer_phone }}</p>
+            <div class="checkout-card">
+                <h3>Informações do Cliente</h3>
+                <div class="buyer-summary">
+                    <p><strong>Nome:</strong> {{ buyer_name }}</p>
+                    <p><strong>Telefone:</strong> {{ buyer_phone }}</p>
+                </div>
             </div>
             {% endif %}
 
             {% if delivery_method %}
-            <div class="delivery-summary">
-                <p><strong>Forma de Entrega:</strong> {{ delivery_method }}</p>
-                {% if delivery_method == 'Entrega' %}
-                    <p><strong>Endereço:</strong> {{ delivery_address }}</p>
-                    <p><strong>Taxa de Entrega:</strong> R$ {{ "%.2f"|format(delivery_fee) }}</p>
-                {% else %}
-                    <p><strong>Taxa de Entrega:</strong> R$ 0,00</p>
-                {% endif %}
+            <div class="checkout-card">
+                <h3>Informações de Entrega</h3>
+                <div class="delivery-summary">
+                    <p><strong>Forma de Entrega:</strong> {{ delivery_method }}</p>
+                    {% if delivery_method == 'Entrega' %}
+                        <p><strong>Endereço:</strong> {{ delivery_address }}</p>
+                        <p><strong>Taxa de Entrega:</strong> R$ {{ "%.2f"|format(delivery_fee) }}</p>
+                    {% else %}
+                        <p><strong>Taxa de Entrega:</strong> R$ 0,00</p>
+                    {% endif %}
+                </div>
             </div>
             {% endif %}
 
             {% if items %}
-            <div class="order-items-summary">
+            <div class="checkout-card">
                 <h3>Itens no Pedido</h3>
-                <ul>
-                    {% for item in items %}
-                    <li>
-                        <strong>{{ item.product.name }}</strong> ({{ item.covering.name if item.covering else 'Sem cobertura' }})
-                        <ul>
-                            {% for fs in item.flavor_selections %}
-                            <li>{{ fs.flavor.name }} x {{ fs.quantity }} = R$ {{ "%.2f"|format((item.product.price + fs.flavor.additional_price) * fs.quantity) }}</li>
-                            {% endfor %}
-                        </ul>
-                    </li>
-                    {% endfor %}
-                </ul>
+                <div class="order-items-summary">
+                    <ul>
+                        {% for item in items %}
+                        <li>
+                            <strong>{{ item.product.name }}</strong> ({{ item.covering.name if item.covering else 'Sem cobertura' }})
+                            <ul>
+                                {% for fs in item.flavor_selections %}
+                                <li>{{ fs.flavor.name }} x {{ fs.quantity }} = R$ {{ "%.2f"|format((item.product.price + fs.flavor.additional_price) * fs.quantity) }}</li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
             </div>
             {% endif %}
 
-            <div class="total-display">
-                <p class="total-text">Valor Total: R$ {{ "%.2f"|format(subtotal) }}</p>
+            <div class="checkout-card total-card">
+                <!--<div class="total-display"> -->
+                    <p class="total-text">Valor Total: R$ {{ "%.2f"|format(subtotal) }}</p>
+                <!--</div> --> 
             </div>
-            <div class="pix-section">
-                <h3 class="pix-title">Pagamento via Pix</h3>
-                <p class="pix-instruction">Copie o código abaixo e cole no seu aplicativo de banco para efetuar o pagamento:</p>
-                <textarea class="pix-code" readonly>{{ pix_code }}</textarea>
-                <button class="copy-btn" onclick="navigator.clipboard.writeText('{{ pix_code }}')">Copiar Código</button>
+            
+            <div class="checkout-card">
+                <div class="pix-section">
+                    <h3 class="pix-title">Pagamento via Pix</h3>
+                    <p class="pix-instruction">Copie o código abaixo e cole no seu aplicativo de banco para efetuar o pagamento:</p>
+                    <textarea class="pix-code" readonly>{{ pix_code }}</textarea>
+                    <button class="copy-btn" onclick="navigator.clipboard.writeText('{{ pix_code }}')">Copiar Código</button>
+                </div>
             </div>
         </section>
     </main>
