@@ -85,6 +85,7 @@ class Order:
 
     buyer_name: str
     buyer_phone: str
+    buyer_email: str = ''
     items: List[OrderItem] = field(default_factory=list)
     delivery_method: str = 'Retirada'
     delivery_address: str = ''
@@ -122,6 +123,7 @@ class Order:
             f"<b>Novo pedido</b>\n"
             f"Nome: {self.buyer_name}\n"
             f"Telefone: {self.buyer_phone}\n"
+            f"Email: {self.buyer_email}\n"
             f"Produtos:\n{item_lines}\n"
             f"Entrega: {delivery_note}\n"
             f"Frete: R$ {self.delivery_fee:.2f}\n"

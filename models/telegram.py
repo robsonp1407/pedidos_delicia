@@ -14,10 +14,8 @@ import requests
 
 # Tokens e IDs podem ser sobrescritos via variáveis de ambiente para não hardcodear
 # valores sensíveis no código.
-TELEGRAM_BOT_TOKEN: Optional[str] = os.environ.get(
-    "TELEGRAM_BOT_TOKEN", "8443861878:AAFYnujIgLAgC4htb2jUh6_cQNozkhXKxcM"
-)
-TELEGRAM_CHAT_ID: Optional[str] = os.environ.get("TELEGRAM_CHAT_ID", "8783789185")
+TELEGRAM_BOT_TOKEN: Optional[str] = os.environ.get("TELEGRAM_BOT_TOKEN")
+TELEGRAM_CHAT_ID: Optional[str] = os.environ.get("TELEGRAM_CHAT_ID")
 
 
 def send_telegram_message(message: str) -> None:
