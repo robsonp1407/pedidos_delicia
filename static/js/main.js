@@ -202,39 +202,45 @@ window.addEventListener('DOMContentLoaded', () => {
 
         const coveringSelect = document.getElementById('modalCoveringSelect');
         const covering = coveringSelect ? coveringSelect.value : 'Sem Cobertura';
+        const coveringAdd = coveringSelect ? Number(coveringSelect.selectedOptions[0].dataset.add) : 0;
 
-        const flavors = [];
-        let itemTotal = activeProduct.price + (coveringSelect ? Number(coveringSelect.selectedOptions[0].dataset.add) : 0);
+        const flavorInputs = Array.from(document.querySelectorAll('.modalFlavorQty'));
 
-        document.querySelectorAll('.modalFlavorQty').forEach(input => {
+        let anyFlavorSelected = false;
+
+        flavorInputs.forEach(input => {
             const qty = Number(input.value);
-            if (qty > 0) {
-                const flavorAdd = Number(input.dataset.add);
-                flavors.push({name: input.dataset.flavorName, qty});
-                itemTotal += flavorAdd;
+            if (qty <= 0) return;
+
+            anyFlavorSelected = true;
+
+            const flavorName = input.dataset.flavorName;
+            const flavorAdd = Number(input.dataset.add);
+            const unitPrice = activeProduct.price + coveringAdd + flavorAdd;
+            const key = `${activeProduct.id}|${covering}|${flavorName}`;
+
+            const existing = cart.find(c => c.key === key);
+            if (existing) {
+                existing.quantity += qty;
+                // Atualiza o objeto de sabores para manter a estrutura FlavorSelection
+                existing.flavors = [{name: flavorName, qty: existing.quantity}];
+                existing.item_total = unitPrice;
+            } else {
+                cart.push({
+                    key,
+                    product_id: activeProduct.id,
+                    name: activeProduct.name,
+                    covering,
+                    flavors: [{name: flavorName, qty}],
+                    quantity: qty,
+                    item_total: unitPrice,
+                });
             }
         });
 
-        const flavorSumQty = flavors.reduce((s, v) => s + v.qty, 0);
-        if (flavorSumQty === 0) {
+        if (!anyFlavorSelected) {
             alert('Escolha pelo menos um recheio para adicionar ao carrinho.');
             return;
-        }
-
-        const key = `${activeProduct.id}|${covering}|${flavors.map(f => `${f.name}:${f.qty}`).sort().join(',')}`;
-        const existing = cart.find(c => c.key === key);
-        if (existing) {
-            existing.quantity += 1;
-        } else {
-            cart.push({
-                key,
-                product_id: activeProduct.id,
-                name: activeProduct.name,
-                covering,
-                flavors,
-                quantity: 1,
-                item_total: itemTotal,
-            });
         }
 
         saveCart();

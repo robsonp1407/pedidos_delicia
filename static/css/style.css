@@ -175,6 +175,22 @@ body {
     font-size: 1em;
 }
 
+.modalFlavorQty {
+    width: 80px;
+    padding: 8px 20px 8px 15px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+    -moz-appearance: textfield;
+}
+
+.modalFlavorQty::-webkit-outer-spin-button,
+.modalFlavorQty::-webkit-inner-spin-button {
+    margin: 0;
+}
+
+.modalFlavorQty:focus,
 .qty-input:focus,
 .text-input:focus {
     outline: none;
