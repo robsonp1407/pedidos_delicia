@@ -5,3 +5,5 @@ venv/
 # Arquivos gerados pelo Python
 __pycache__/
 *.pyc
+
+static/chaves_ssh
