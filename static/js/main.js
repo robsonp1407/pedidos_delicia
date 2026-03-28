@@ -1,5 +1,8 @@
 // JavaScript SPA para carrinho, modal de customização e checkout
 
+const MIN_CHECKOUT_SUBTOTAL = 25;
+const FRETE_GRATIS_TAG_SUBTOTAL = 50;
+
 function maskPhone(value) {
     let digits = value.replace(/\D/g, '');
     if (digits.length > 11) digits = digits.slice(0, 11);
@@ -10,9 +13,16 @@ function maskPhone(value) {
     return formatted;
 }
 
+function maskCep(value) {
+    let digits = value.replace(/\D/g, '').slice(0, 8);
+    if (digits.length > 5) {
+        return digits.slice(0, 5) + '-' + digits.slice(5);
+    }
+    return digits;
+}
+
 window.addEventListener('DOMContentLoaded', () => {
     const cartKey = 'pedidos_delicia_cart';
-    const deliveryFeeValue = 5.00;
 
     const products = {};
     document.querySelectorAll('.product-card').forEach(card => {
@@ -51,6 +61,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const hiddenBuyerEmail = document.getElementById('hidden_buyer_email');
     const hiddenDeliveryMethod = document.getElementById('hidden_delivery_method');
     const hiddenDeliveryAddress = document.getElementById('hidden_delivery_address');
+    const hiddenBuyerCep = document.getElementById('hidden_buyer_cep');
     const hiddenCartItems = document.getElementById('hidden_cart_items');
 
     const buyerNameInput = document.getElementById('drawer_buyer_name');
@@ -60,12 +71,48 @@ window.addEventListener('DOMContentLoaded', () => {
     const deliveryAddressInput = document.getElementById('drawer_delivery_address');
     const addressLabel = document.getElementById('drawer-address-label');
 
+    const buyerCepInput = document.getElementById('buyer_cep');
+    const calcFreteBtn = document.getElementById('calcFreteBtn');
+    const drawerCepRow = document.getElementById('drawer-cep-row');
+    const freightEtaLine = document.getElementById('freightEtaLine');
+    const freightEta = document.getElementById('freightEta');
+    const freteGratisTag = document.getElementById('freteGratisTag');
+
+    let freightCalculated = false;
+    let lastFreightValue = 0;
+    let subtotalWhenFreightLocked = null;
+
+    function invalidateFreight() {
+        freightCalculated = false;
+        lastFreightValue = 0;
+        subtotalWhenFreightLocked = null;
+        if (freightEtaLine) freightEtaLine.hidden = true;
+        if (freightEta) freightEta.textContent = '';
+    }
+
+    function syncFreightValidityWithSubtotal() {
+        if (!deliveryMethodInput || deliveryMethodInput.value !== 'Entrega') return;
+        if (!freightCalculated || subtotalWhenFreightLocked === null) return;
+        const sub = calculateCartTotal();
+        if (Math.abs(sub - subtotalWhenFreightLocked) > 0.001) {
+            invalidateFreight();
+        }
+    }
+
     [buyerPhoneInput].forEach(input => {
         if (!input) return;
         input.addEventListener('input', event => {
             event.target.value = maskPhone(event.target.value);
         });
     });
+
+    if (buyerCepInput) {
+        buyerCepInput.addEventListener('input', () => {
+            buyerCepInput.value = maskCep(buyerCepInput.value);
+            invalidateFreight();
+            updateFreightDisplayOnly();
+        });
+    }
 
     let activeProduct = null;
 
@@ -81,7 +128,42 @@ window.addEventListener('DOMContentLoaded', () => {
         return cart.reduce((sum, item) => sum + item.quantity * item.item_total, 0);
     }
 
+    function updateFreightDisplayOnly() {
+        syncFreightValidityWithSubtotal();
+
+        if (!cart.length) {
+            if (freteGratisTag) freteGratisTag.hidden = true;
+            deliveryFeeEl.textContent = formatCurrency(0);
+            drawerTotalEl.textContent = formatCurrency(0);
+            return;
+        }
+
+        const subtotal = calculateCartTotal();
+        const isEntrega = deliveryMethodInput && deliveryMethodInput.value === 'Entrega';
+
+        if (freteGratisTag) {
+            freteGratisTag.hidden = !(subtotal > FRETE_GRATIS_TAG_SUBTOTAL);
+        }
+
+        let deliveryFee = 0;
+        if (isEntrega) {
+            if (freightCalculated) {
+                deliveryFee = lastFreightValue;
+                deliveryFeeEl.textContent = formatCurrency(deliveryFee);
+            } else {
+                deliveryFeeEl.textContent = '—';
+                deliveryFee = 0;
+            }
+        } else {
+            deliveryFeeEl.textContent = formatCurrency(0);
+        }
+
+        const totalComFrete = subtotal + (isEntrega && freightCalculated ? lastFreightValue : 0);
+        drawerTotalEl.textContent = formatCurrency(totalComFrete);
+    }
+
     function renderCart() {
+        syncFreightValidityWithSubtotal();
         cartItemsList.innerHTML = '';
 
         if (cart.length === 0) {
@@ -116,16 +198,15 @@ window.addEventListener('DOMContentLoaded', () => {
         cartCountEl.textContent = cart.reduce((q, i) => q + i.quantity, 0);
         cartTotalEl.textContent = formatCurrency(total);
 
-        let deliveryFee = 0;
-        if (deliveryMethodInput && deliveryMethodInput.value === 'Entrega') {
-            deliveryFee = deliveryFeeValue;
+        const isEntrega = deliveryMethodInput && deliveryMethodInput.value === 'Entrega';
+        if (drawerCepRow) {
+            drawerCepRow.style.display = isEntrega ? 'block' : 'none';
         }
-        deliveryFeeEl.textContent = formatCurrency(deliveryFee);
-        drawerTotalEl.textContent = formatCurrency(total + deliveryFee);
+        if (!isEntrega) {
+            invalidateFreight();
+        }
 
-        if (!cart.length) {
-            drawerTotalEl.textContent = formatCurrency(0);
-        }
+        updateFreightDisplayOnly();
 
         document.querySelectorAll('.decrease-btn').forEach(btn => {
             btn.addEventListener('click', () => {
@@ -133,6 +214,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 if (cart[i].quantity > 1) cart[i].quantity -= 1;
                 else cart.splice(i, 1);
                 saveCart();
+                invalidateFreight();
                 renderCart();
             });
         });
@@ -142,6 +224,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 const i = Number(btn.dataset.index);
                 cart[i].quantity += 1;
                 saveCart();
+                invalidateFreight();
                 renderCart();
             });
         });
@@ -151,8 +234,82 @@ window.addEventListener('DOMContentLoaded', () => {
                 const i = Number(btn.dataset.index);
                 cart.splice(i, 1);
                 saveCart();
+                invalidateFreight();
                 renderCart();
             });
+        });
+    }
+
+    async function onCalcularFreteClick() {
+        if (!buyerCepInput || !calcFreteBtn) return;
+
+        const cepDigits = buyerCepInput.value.replace(/\D/g, '');
+        if (cepDigits.length !== 8) {
+            alert('Informe um CEP válido (8 dígitos).');
+            return;
+        }
+
+        const subtotal = calculateCartTotal();
+        if (subtotal < MIN_CHECKOUT_SUBTOTAL) {
+            alert(
+                'O valor mínimo do pedido para checkout é R$ 25,00. Adicione mais itens ao carrinho.'
+            );
+            return;
+        }
+
+        calcFreteBtn.disabled = true;
+        try {
+            const res = await fetch('/api/calcula_frete', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                },
+                body: JSON.stringify({
+                    cep: buyerCepInput.value.trim(),
+                    subtotal,
+                    delivery_method: 'Entrega',
+                }),
+            });
+
+            let data = {};
+            try {
+                data = await res.json();
+            } catch (_) {
+                data = {};
+            }
+
+            if (!res.ok || !data.ok) {
+                alert(data.error || 'Não foi possível calcular o frete. Tente novamente.');
+                invalidateFreight();
+                renderCart();
+                return;
+            }
+
+            lastFreightValue = Number(data.freight_value) || 0;
+            freightCalculated = true;
+            subtotalWhenFreightLocked = subtotal;
+
+            if (freightEta && freightEtaLine) {
+                const eta = (data.estimated_time || '').trim();
+                freightEta.textContent = eta;
+                freightEtaLine.hidden = !eta;
+            }
+
+            renderCart();
+        } catch (err) {
+            console.error(err);
+            alert('Erro de rede ao calcular o frete. Verifique sua conexão.');
+            invalidateFreight();
+            renderCart();
+        } finally {
+            calcFreteBtn.disabled = false;
+        }
+    }
+
+    if (calcFreteBtn) {
+        calcFreteBtn.addEventListener('click', () => {
+            onCalcularFreteClick();
         });
     }
 
@@ -162,11 +319,10 @@ window.addEventListener('DOMContentLoaded', () => {
         modalProductName.textContent = activeProduct.name;
         modalProductPrice.textContent = `Preço base: ${formatCurrency(activeProduct.price)}`;
 
-        // Coberturas
         if (activeProduct.coverings && activeProduct.coverings.length > 0) {
             let html = '<label>Cobertura:</label><select id="modalCoveringSelect">';
             activeProduct.coverings.forEach((cover, idx) => {
-                html += `<option value="${cover.name}" data-add="${cover.additional_price}" ${idx===0 ? 'selected' : ''}>${cover.name} ${cover.additional_price > 0 ? `( + ${formatCurrency(cover.additional_price)})` : ''}</option>`;
+                html += `<option value="${cover.name}" data-add="${cover.additional_price}" ${idx === 0 ? 'selected' : ''}>${cover.name} ${cover.additional_price > 0 ? `( + ${formatCurrency(cover.additional_price)})` : ''}</option>`;
             });
             html += '</select>';
             modalCoverings.innerHTML = html;
@@ -174,7 +330,6 @@ window.addEventListener('DOMContentLoaded', () => {
             modalCoverings.innerHTML = '<p>Sem coberturas disponíveis para este produto.</p>';
         }
 
-        // Sabores
         let flavorHtml = '<p>Recheios:</p>';
         activeProduct.flavors.forEach(flavor => {
             flavorHtml += `
@@ -224,8 +379,7 @@ window.addEventListener('DOMContentLoaded', () => {
             const existing = cart.find(c => c.key === key);
             if (existing) {
                 existing.quantity += qty;
-                // Atualiza o objeto de sabores para manter a estrutura FlavorSelection
-                existing.flavors = [{name: flavorName, qty: existing.quantity}];
+                existing.flavors = [{ name: flavorName, qty: existing.quantity }];
                 existing.item_total = unitPrice;
             } else {
                 cart.push({
@@ -233,7 +387,7 @@ window.addEventListener('DOMContentLoaded', () => {
                     product_id: activeProduct.id,
                     name: activeProduct.name,
                     covering,
-                    flavors: [{name: flavorName, qty}],
+                    flavors: [{ name: flavorName, qty }],
                     quantity: qty,
                     item_total: unitPrice,
                 });
@@ -246,6 +400,7 @@ window.addEventListener('DOMContentLoaded', () => {
         }
 
         saveCart();
+        invalidateFreight();
         renderCart();
         productModal.style.display = 'none';
     });
@@ -267,6 +422,7 @@ window.addEventListener('DOMContentLoaded', () => {
             deliveryAddressInput.style.display = 'none';
             addressLabel.style.display = 'none';
             deliveryAddressInput.value = '';
+            invalidateFreight();
         }
         renderCart();
     });
@@ -274,6 +430,14 @@ window.addEventListener('DOMContentLoaded', () => {
     checkoutBtn.addEventListener('click', () => {
         if (cart.length === 0) {
             alert('Adicione ao menos um item ao carrinho.');
+            return;
+        }
+
+        const subtotal = calculateCartTotal();
+        if (subtotal < MIN_CHECKOUT_SUBTOTAL) {
+            alert(
+                'O valor mínimo do pedido para checkout é R$ 25,00. Adicione mais itens ao carrinho.'
+            );
             return;
         }
 
@@ -299,11 +463,24 @@ window.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        if (deliveryMethod === 'Entrega') {
+            const cepDigits = buyerCepInput ? buyerCepInput.value.replace(/\D/g, '') : '';
+            if (cepDigits.length !== 8) {
+                alert('Informe um CEP válido (8 dígitos) para entrega.');
+                return;
+            }
+            if (!freightCalculated) {
+                alert('Calcule o frete antes de finalizar o pedido (botão Calcular Frete).');
+                return;
+            }
+        }
+
         hiddenBuyerName.value = buyerName;
         hiddenBuyerPhone.value = buyerPhone;
         hiddenBuyerEmail.value = buyerEmail;
         hiddenDeliveryMethod.value = deliveryMethod;
         hiddenDeliveryAddress.value = deliveryAddress;
+        hiddenBuyerCep.value = buyerCepInput ? buyerCepInput.value.trim() : '';
         hiddenCartItems.value = JSON.stringify(cart);
 
         hiddenForm.submit();

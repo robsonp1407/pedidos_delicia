@@ -13,6 +13,9 @@
     </header>
 
     <main class="main-content">
+        {% if freight_checkout_error is defined and freight_checkout_error %}
+        <div class="checkout-banner-error" role="alert">{{ freight_checkout_error }}</div>
+        {% endif %}
         <section class="catalog">
             <h2 class="section-title">Catálogo de Produtos</h2>
             <div class="products-grid" id="productsGrid">
@@ -61,11 +64,22 @@
                 <label>Forma de Entrega<span>*</span>:</label>
                 <select id="drawer_delivery_method">
                     <option value="Retirada" selected>Retirada no Local (Grátis)</option>
-                    <option value="Entrega">Entrega em Curitiba (+R$ 5,00)</option>
+                    <option value="Entrega">Entrega em Curitiba</option>
                 </select>
 
                 <label id="drawer-address-label" style="display:none;">Endereço de Entrega<span>*</span>:</label>
                 <input type="text" id="drawer_delivery_address" placeholder="Rua, número, bairro" style="display:none;">
+
+                <div id="drawer-cep-row" class="drawer-cep-row" style="display:none;">
+                    <label for="buyer_cep">CEP<span>*</span>:</label>
+                    <div class="cep-row-actions">
+                        <input type="text" id="buyer_cep" name="buyer_cep" inputmode="numeric" autocomplete="postal-code" maxlength="9" placeholder="00000-000">
+                        <button type="button" id="calcFreteBtn" class="btn-calc-frete">Calcular Frete</button>
+                    </div>
+                    <p id="freightEtaLine" class="freight-eta-line" hidden>Tempo estimado: <span id="freightEta"></span></p>
+                </div>
+
+                <p id="freteGratisTag" class="frete-gratis-tag" hidden>Frete Grátis!</p>
 
                 <p class="delivery-fee">Taxa de Entrega: <strong id="deliveryFee">R$ 0,00</strong></p>
                 <p class="cart-total">Total: <strong id="drawerTotal">R$ 0,00</strong></p>
@@ -80,6 +94,7 @@
             <input type="hidden" name="buyer_email" id="hidden_buyer_email">
             <input type="hidden" name="delivery_method" id="hidden_delivery_method">
             <input type="hidden" name="delivery_address" id="hidden_delivery_address">
+            <input type="hidden" name="buyer_cep" id="hidden_buyer_cep" value="">
             <input type="hidden" name="cart_items" id="hidden_cart_items">
         </form>
 

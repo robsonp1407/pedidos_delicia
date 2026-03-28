@@ -26,10 +26,7 @@ def send_telegram_message(message: str) -> None:
     """
     TELEGRAM_BOT_TOKEN: Optional[str] = os.environ.get("TELEGRAM_BOT_TOKEN")
     TELEGRAM_CHAT_ID: Optional[str] = os.environ.get("TELEGRAM_CHAT_ID")
-    
-    print("TOKEN:", TELEGRAM_BOT_TOKEN)
-    print("CHAT_ID:", TELEGRAM_CHAT_ID)
-    
+
     if not TELEGRAM_BOT_TOKEN or "YOUR_TELEGRAM_BOT_TOKEN" in TELEGRAM_BOT_TOKEN:
         print("Telegram token não configurado, mensagem não enviada:", message)
         return

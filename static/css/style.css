@@ -504,6 +504,67 @@ body {
     border-radius: 5px;
 }
 
+.checkout-banner-error {
+    background: #fde8e8;
+    color: #9b1c1c;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #f5b5b5;
+}
+
+.drawer-cep-row .cep-row-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    margin: 6px 0 12px;
+}
+
+.drawer-cep-row #buyer_cep {
+    flex: 1 1 120px;
+    min-width: 0;
+    margin: 0;
+}
+
+.btn-calc-frete {
+    flex: 0 0 auto;
+    padding: 8px 14px;
+    background: #2F6F4F;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.btn-calc-frete:hover {
+    filter: brightness(1.05);
+}
+
+.btn-calc-frete:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.freight-eta-line {
+    font-size: 0.9rem;
+    color: #555;
+    margin: -4px 0 8px;
+}
+
+.frete-gratis-tag {
+    display: inline-block;
+    background: #e8f5e9;
+    color: #2e7d32;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 6px 12px;
+    border-radius: 20px;
+    margin-top: 4px;
+    border: 1px solid #a5d6a7;
+}
+
 .cart-total,
 .delivery-fee {
     margin-top: 12px;
@@ -678,3 +739,15 @@ body {
     }
 }
 
+/* Garante que o atributo hidden funcione mesmo com classes de layout */
+[hidden] {
+    display: none !important;
+}
+
+.frete-gratis-tag {
+    color: #2F6F4F; /* Verde da nova logo */
+    font-weight: bold;
+    margin-top: 5px;
+    font-size: 0.9em;
+    /* Remova qualquer 'display: block' que esteja aqui fixo */
+}
