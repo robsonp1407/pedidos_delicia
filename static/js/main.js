@@ -252,7 +252,7 @@ window.addEventListener('DOMContentLoaded', () => {
         const subtotal = calculateCartTotal();
         if (subtotal < MIN_CHECKOUT_SUBTOTAL) {
             alert(
-                'O valor mínimo do pedido para checkout é R$ 25,00. Adicione mais itens ao carrinho.'
+                'O pedido mínimo para entrega é de R$ 25,00. Adicione mais delícias ao seu carrinho ou escolha a opção de Retirada Local.'
             );
             return;
         }
@@ -434,9 +434,11 @@ window.addEventListener('DOMContentLoaded', () => {
         }
 
         const subtotal = calculateCartTotal();
-        if (subtotal < MIN_CHECKOUT_SUBTOTAL) {
+        const deliveryMethod = deliveryMethodInput.value;
+
+        if (deliveryMethod === 'Entrega' && subtotal < MIN_CHECKOUT_SUBTOTAL) {
             alert(
-                'O valor mínimo do pedido para checkout é R$ 25,00. Adicione mais itens ao carrinho.'
+                'O pedido mínimo para entrega é de R$ 25,00. Adicione mais delícias ao seu carrinho ou escolha a opção de Retirada Local.'
             );
             return;
         }
@@ -444,7 +446,6 @@ window.addEventListener('DOMContentLoaded', () => {
         const buyerName = buyerNameInput.value.trim();
         const buyerPhone = buyerPhoneInput.value.trim();
         const buyerEmail = buyerEmailInput ? buyerEmailInput.value.trim() : '';
-        const deliveryMethod = deliveryMethodInput.value;
         const deliveryAddress = deliveryAddressInput.value.trim();
 
         if (!buyerName || !buyerPhone) {

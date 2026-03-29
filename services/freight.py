@@ -230,7 +230,7 @@ def calculate_freight(
         FreightCalculationResult com ``freight_value`` (float, 2 casas) e ``estimated_time``.
 
     Raises:
-        PedidoMinimoNaoAtingidoError: subtotal < R$ 25,00.
+        PedidoMinimoNaoAtingidoError: subtotal < R$ 25,00 (apenas para entrega).
         ForaDaAreaEntregaError: distância > 10 km.
         FreteIndisponivelError: falha de API / chave / resposta inválida (mensagem com WhatsApp).
         ValueError: CEP inválido em modo entrega.
@@ -238,9 +238,6 @@ def calculate_freight(
 
     method = (delivery_method or "").strip()
     subtotal_dec = _normalize_subtotal(subtotal)
-
-    if subtotal_dec < MIN_CHECKOUT_SUBTOTAL:
-        raise PedidoMinimoNaoAtingidoError()
 
     if method == "Retirada":
         return FreightCalculationResult(
@@ -252,6 +249,9 @@ def calculate_freight(
         raise ValueError(
             'Método de entrega desconhecido. Use "Entrega" ou "Retirada".'
         )
+
+    if subtotal_dec < MIN_CHECKOUT_SUBTOTAL:
+        raise PedidoMinimoNaoAtingidoError()
 
     cep_key = normalize_cep_key(cep_destino)
 
