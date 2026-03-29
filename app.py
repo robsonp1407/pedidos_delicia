@@ -8,11 +8,14 @@ contida em `models/` para manter a aplicação organizada seguindo o padrão MVC
 """
 
 from flask import Flask, render_template, request
+from dotenv import load_dotenv
 
 from models.order import Order
+from models.payment import generate_pix_code
 from models.product import load_products
 from models.telegram import notify_async
 
+load_dotenv()
 
 app = Flask(__name__)
 
@@ -34,6 +37,7 @@ def pagamento() -> str:
 
     buyer_name = request.form.get('buyer_name', '').strip()
     buyer_phone = request.form.get('buyer_phone', '').strip()
+    buyer_email = request.form.get('buyer_email', '').strip()
     delivery_method = request.form.get('delivery_method', 'Retirada')
     delivery_address = request.form.get('delivery_address', '').strip()
     delivery_fee = 0.0
@@ -44,6 +48,7 @@ def pagamento() -> str:
     order = Order(
         buyer_name=buyer_name,
         buyer_phone=buyer_phone,
+        buyer_email=buyer_email,
         delivery_method=delivery_method,
         delivery_address=delivery_address,
         delivery_fee=delivery_fee,
@@ -81,9 +86,7 @@ def pagamento() -> str:
 
     notify_async(order.build_telegram_message())
 
-    pix_code = (
-        "00020101021126580014br.gov.bcb.pix0136123e4567-e12b-12d1-a456-42665544000052040000530398654040.005802BR5913Fulano de Tal6008BRASILIA62070503***6304E2CA"
-    )
+    pix_code = generate_pix_code(order)
 
     return render_template(
         'checkout.html',

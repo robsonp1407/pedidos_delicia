@@ -9,8 +9,7 @@
 </head>
 <body>
     <header class="header">
-        <div class="logo-container"><img src="{{ url_for('static', filename='img/Logo_delicia.jpg') }}" alt="De'licia Logo" class="logo"></div>
-        <h1 class="store-name">De'licia</h1>
+        <div class="logo-container"><img src="{{ url_for('static', filename='img/Logotipo-v2.png') }}" alt="De'licia Logo" class="logo"></div>
     </header>
 
     <main class="main-content">
@@ -56,6 +55,9 @@
                 <label>Telefone<span>*</span>:</label>
                 <input type="text" id="drawer_buyer_phone" placeholder="(00) 00000-0000">
 
+                <label>E-mail<span>*</span>:</label>
+                <input type="email" id="drawer_buyer_email" class="text-input" placeholder="seu@email.com">
+
                 <label>Forma de Entrega<span>*</span>:</label>
                 <select id="drawer_delivery_method">
                     <option value="Retirada" selected>Retirada no Local (Grátis)</option>
@@ -75,6 +77,7 @@
         <form id="submitOrderForm" action="{{ url_for('pagamento') }}" method="post" style="display:none;">
             <input type="hidden" name="buyer_name" id="hidden_buyer_name">
             <input type="hidden" name="buyer_phone" id="hidden_buyer_phone">
+            <input type="hidden" name="buyer_email" id="hidden_buyer_email">
             <input type="hidden" name="delivery_method" id="hidden_delivery_method">
             <input type="hidden" name="delivery_address" id="hidden_delivery_address">
             <input type="hidden" name="cart_items" id="hidden_cart_items">

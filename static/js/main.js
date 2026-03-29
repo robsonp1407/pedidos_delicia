@@ -48,12 +48,14 @@ window.addEventListener('DOMContentLoaded', () => {
     const hiddenForm = document.getElementById('submitOrderForm');
     const hiddenBuyerName = document.getElementById('hidden_buyer_name');
     const hiddenBuyerPhone = document.getElementById('hidden_buyer_phone');
+    const hiddenBuyerEmail = document.getElementById('hidden_buyer_email');
     const hiddenDeliveryMethod = document.getElementById('hidden_delivery_method');
     const hiddenDeliveryAddress = document.getElementById('hidden_delivery_address');
     const hiddenCartItems = document.getElementById('hidden_cart_items');
 
     const buyerNameInput = document.getElementById('drawer_buyer_name');
     const buyerPhoneInput = document.getElementById('drawer_buyer_phone');
+    const buyerEmailInput = document.getElementById('drawer_buyer_email');
     const deliveryMethodInput = document.getElementById('drawer_delivery_method');
     const deliveryAddressInput = document.getElementById('drawer_delivery_address');
     const addressLabel = document.getElementById('drawer-address-label');
@@ -277,11 +279,18 @@ window.addEventListener('DOMContentLoaded', () => {
 
         const buyerName = buyerNameInput.value.trim();
         const buyerPhone = buyerPhoneInput.value.trim();
+        const buyerEmail = buyerEmailInput ? buyerEmailInput.value.trim() : '';
         const deliveryMethod = deliveryMethodInput.value;
         const deliveryAddress = deliveryAddressInput.value.trim();
 
         if (!buyerName || !buyerPhone) {
             alert('Informe seu nome e telefone.');
+            return;
+        }
+
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!buyerEmail || !emailPattern.test(buyerEmail)) {
+            alert('Informe um e-mail válido para continuar.');
             return;
         }
 
@@ -292,6 +301,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
         hiddenBuyerName.value = buyerName;
         hiddenBuyerPhone.value = buyerPhone;
+        hiddenBuyerEmail.value = buyerEmail;
         hiddenDeliveryMethod.value = deliveryMethod;
         hiddenDeliveryAddress.value = deliveryAddress;
         hiddenCartItems.value = JSON.stringify(cart);

@@ -14,18 +14,22 @@ import requests
 
 # Tokens e IDs podem ser sobrescritos via variáveis de ambiente para não hardcodear
 # valores sensíveis no código.
-TELEGRAM_BOT_TOKEN: Optional[str] = os.environ.get(
-    "TELEGRAM_BOT_TOKEN", "8443861878:AAFYnujIgLAgC4htb2jUh6_cQNozkhXKxcM"
-)
-TELEGRAM_CHAT_ID: Optional[str] = os.environ.get("TELEGRAM_CHAT_ID", "8783789185")
+#TELEGRAM_BOT_TOKEN: Optional[str] = os.environ.get("TELEGRAM_BOT_TOKEN")
+#TELEGRAM_CHAT_ID: Optional[str] = os.environ.get("TELEGRAM_CHAT_ID")
 
 
 def send_telegram_message(message: str) -> None:
     """Envia mensagem para o Telegram via Bot API.
 
     Caso o token não esteja configurado, apenas escreve um log e não faz a
-    chamada HTTP.
+    chamada HTTP.    
     """
+    TELEGRAM_BOT_TOKEN: Optional[str] = os.environ.get("TELEGRAM_BOT_TOKEN")
+    TELEGRAM_CHAT_ID: Optional[str] = os.environ.get("TELEGRAM_CHAT_ID")
+    
+    print("TOKEN:", TELEGRAM_BOT_TOKEN)
+    print("CHAT_ID:", TELEGRAM_CHAT_ID)
+    
     if not TELEGRAM_BOT_TOKEN or "YOUR_TELEGRAM_BOT_TOKEN" in TELEGRAM_BOT_TOKEN:
         print("Telegram token não configurado, mensagem não enviada:", message)
         return
